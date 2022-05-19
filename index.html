@@ -26,100 +26,106 @@
         </ul>
     </header>
     <div class="fff">
-    	<span class="fff--span">DC1 <span class="fff--x">X</span></span>
-    	<span class="fff--span">DC2 <span class="fff--x">X</span></span>
-   		<input autocomplete="off" onkeyup="build(event)" class="fff--select">
+        <span class="fff--span">DC1 <span class="fff--x">X</span></span>
+        <span class="fff--span">DC2 <span class="fff--x">X</span></span>
+        <input autocomplete="off" onkeyup="build(event)" class="fff--select">
     </div>
     <div class="fff--list">
-    	<ul>
-    		<li>
-    			moskow
-    		</li>
-    		<li>
-    			spb
-    		</li>
-    	</ul>
+        <ul>
+            <li>
+                moskow
+            </li>
+            <li>
+                spb
+            </li>
+        </ul>
     </div>
 </div>
 <style>
    .fff--span{
-   	z-index: 999;
-   	padding: 10px;
-   	background-color: gray;
-   	margin: 4px;
+    z-index: 999;
+    padding: 10px;
+    background-color: gray;
+    margin: 4px;
    }
    .fff{
-   	border: 1px solid blue;
-   	width: 100%;
+    border: 1px solid blue;
+    width: 100%;
     padding: 10px;
     display: inline-flex;
     width: 400px;
    }
    .fff--select{
-   	border: 0px;
+    border: 0px;
    }
    .fff--select::focus-visible {
-     	border: 0px !important;
+        border: 0px !important;
    }
    .fff--x{
-   	cursor: pointer;
+    cursor: pointer;
    }
    .fff--list{
    display: none;
    }
    
    .fff--list{
-   	width: 400px;
-   	border: 1px solid black;
+    width: 400px;
+    border: 1px solid black;
    }
 </style>
 <script>
-	let arr;
-	let tmp = [];
-	function build(event){
+    let arr;
+    let tmp = [];
+    function build(event){
          tmp = [];
-		let ch = event.target.value;
-		let lvl1 = arr.data.filter((item)=>{
-			if(item["RegionName"].includes(ch)){
-				return true;
-			}
-			else{
-				return false;
-			}
-		}) 
-		let step2 = lvl1.map((item)=>{
-			let cc = [];
-			function get(d){
-				if(tmp.includes(d["RegionID"])){
-					return;
-				}
-				cc.push(d);
-				tmp.push(d["RegionID"]);
-				if(d["ParentID"]){
-					get(arr.data.find((cc)=>cc["RegionID"] === d["ParentID"]));
-				}
-			}
-			if(item["ParentID"]){
-				get(item);
-			}else{
-				if(tmp.includes(item["RegionID"])){
-					return;
-				}
-				cc.push(item)
-				tmp.push(item["RegionID"]);
-			}
-			return cc;
-		});
+        let ch = event.target.value;
+        let lvl1 = arr.data.filter((item)=>{
+            if(item["RegionName"].includes(ch)){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }) 
+       let step2 = lvl1.map((item) => {
+            let cc = [];
+ 
+            function get(d) {
+                if (tmp.includes(d["RegionID"])) {
+                    tmp.find((i) => i["RegionID"] == d["RegionID"]).cc.push(...cc);
+                    cc = cc.filter((q)=>false);
+                    return;
+                }
+                cc.push(d);
+                tmp.push({id: d["RegionID"], cc: cc});
+                if (d["ParentID"]) {
+                    get(arr.data.find((cc) => cc["RegionID"] === d["ParentID"]));
+                }
+            }
+
+            if (item["ParentID"]) {
+                get(item);
+            } else {
+                if (tmp.includes(item["RegionID"])) {
+                    tmp.find((i) => i["RegionID"] == item["RegionID"]).cc.push(...cc);
+                    cc = cc.filter((q)=>false);
+                    return;
+                }
+                cc.push(item)
+                tmp.push({id: item["RegionID"], cc: cc});
+            }
+            return cc;
+        });
         console.log(JSON.parse(JSON.stringify(step2)));
 
 
-		document.querySelector(".fff--list").innerHTML = `<ul>` + lvl1.map((item)=>`<li>${item["RegionName"]}</li>`).join("")
-	}	
+        document.querySelector(".fff--list").innerHTML = `<ul>` + lvl1.map((item)=>`<li>${item["RegionName"]}</li>`).join("")
+    }   
     document.querySelector(".fff--select").addEventListener('focus', () =>{
-    	document.querySelector(".fff--list").style.display = "flex" ;
+        document.querySelector(".fff--list").style.display = "flex" ;
     });
      document.querySelector(".fff--select").addEventListener('focusout', () =>{
-    	document.querySelector(".fff--list").style.display ="none";
+        document.querySelector(".fff--list").style.display ="none";
  
     });
 
