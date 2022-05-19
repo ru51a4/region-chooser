@@ -32,7 +32,7 @@
                         <span class="fff&#45;&#45;span">DC2 <span class="fff&#45;&#45;x">X</span></span>
             -->
         </div>
-        <input autocomplete="off" onkeyup="build(event)" class="fff--select">
+        <input autocomplete="off" onkeyup="build(event.target.value)" class="fff--select">
     </div>
     <div class="fff--list">
         <ul>
@@ -85,10 +85,15 @@
 <script>
     let arr;
     let tmp = [];
+    let vw = [];
+    let ch;
 
-    function build(event) {
+    function build(cch) {
         tmp = [];
-        let ch = event.target.value;
+        if (cch) {
+            ch = cch;
+        }
+
         let lvl1 = arr.data.filter((item) => {
             return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
         })
@@ -139,8 +144,8 @@
         let lvl = 1;
         let build = (item) => {
             lvl++;
-            html += `<li><span style="cursor: pointer; color:blue;" onclick="addMarker(${item["RegionID"]})">add</span> ${item["RegionName"]}</li>`
-            let childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || lvl >3));
+            html += `<li><span onclick="toogle(${item["RegionID"]})">toogle</span> <span style="cursor: pointer; color:blue;" onclick="addMarker(${item["RegionID"]})">add</span> ${item["RegionName"]}</li>`
+            let childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || vw.includes(item["RegionID"])));
             html += "<ul>"
             childs.forEach((item) => {
                 build(item);
@@ -158,6 +163,16 @@
 
 
         document.querySelector(".fff--list").innerHTML = html
+    }
+
+    function toogle(id) {
+        if (vw.includes(id)) {
+            vw = vw.filter((i) => i !== id)
+        } else {
+            vw.push(id);
+        }
+        console.log(vw)
+        build(false);
     }
 
     function addMarker(id) {
