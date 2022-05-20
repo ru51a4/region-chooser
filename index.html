@@ -65,7 +65,7 @@
         border: 0px;
     }
 
-    .fff--select::focus-visible {
+    .fff--select:focus-visible {
         border: 0px !important;
     }
 
@@ -87,8 +87,42 @@
     let tmp = [];
     let vw = [];
     let ch;
+    let step2;
+    let all = [];
+    let parrent = [];
+
+    let find = (id) => {
+        let res = false;
+        step2.forEach((items) => {
+            items.forEach((item) => {
+                if (item["RegionID"] == id) {
+                    res = true;
+                }
+            });
+        });
+        return res;
+    }
+
+    let findChilds = (findId) => {
+        let all = [...vw];
+        let queue = [...vw];
+        let getAll = (id) => {
+            let childs = arr.data.filter((item) => {
+                return item["ParentID"] == id
+            }).map((item) => item["RegionID"]);
+            all.push(...childs)
+            childs.forEach((id) => {
+                getAll(id);
+            })
+        }
+        queue.forEach((id) => {
+            getAll(id);
+        })
+        return all.includes(findId);
+    }
 
     function build(cch) {
+
         tmp = [];
         if (cch) {
             ch = cch;
@@ -97,7 +131,7 @@
         let lvl1 = arr.data.filter((item) => {
             return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
         })
-        let step2 = lvl1.map((item) => {
+        step2 = lvl1.map((item) => {
             let cc = [];
 
             function get(d) {
@@ -129,23 +163,18 @@
         if (step2.length > 100) {
             return
         }
-        let find = (id) => {
-            let res = false;
-            step2.forEach((items) => {
-                items.forEach((item) => {
-                    if (item["RegionID"] == id) {
-                        res = true;
-                    }
-                });
-            });
-            return res;
-        }
+
         let html = '<ul>';
         let lvl = 1;
+        all = [];
+
         let build = (item) => {
             lvl++;
-            html += `<li><span onclick="toogle(${item["RegionID"]})">toogle</span> <span style="cursor: pointer; color:blue;" onclick="addMarker(${item["RegionID"]})">add</span> ${item["RegionName"]}</li>`
-            let childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || vw.includes(item["RegionID"])));
+            let childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"]);
+            let spanToogle = (1) ? `<input type="checkbox" name="scales" id="${item["RegionID"]}" onchange="toogle(${item["RegionID"]})">` : "";
+            childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || findChilds(cc["RegionID"])));
+            let isFind = item["RegionName"].toLowerCase().includes(ch.toLowerCase());
+            html += `<li>${spanToogle} <span style="color: ${isFind ? "red" : "black"}">${item["RegionName"]}</span></li>`
             html += "<ul>"
             childs.forEach((item) => {
                 build(item);
@@ -166,14 +195,28 @@
     }
 
     function toogle(id) {
+
+        let c = true;
         if (vw.includes(id)) {
             vw = vw.filter((i) => i !== id)
+            c = false
         } else {
             vw.push(id);
+            addMarker(id);
         }
-        console.log(vw)
         build(false);
+
+        let deep = (item) => {
+            childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || findChilds(cc["RegionID"])));
+            document.querySelector(`input[id="${item["RegionID"]}"]`).checked = (c) ? "checked" : '';
+            childs.forEach((item) => {
+                deep(item);
+            });
+        }
+        deep(arr.data.find((item) => item["RegionID"] == id));
+
     }
+
 
     function addMarker(id) {
         let name = arr.data.find((item) => {
