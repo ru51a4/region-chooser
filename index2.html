@@ -120,6 +120,7 @@
         queue.forEach((id) => {
             getAll(id);
         })
+        console.log(all)
         return all.includes(findId);
     }
 
@@ -234,9 +235,7 @@
                 //удалить всех детей span
                 //если чекбоксминус_айди есть в детях айди
                 let r = [];
-                if(document.querySelector(`span[id="${id}"]`)) {
-                    document.querySelector(`span[id="${id}"]`).remove();
-                }
+                document.querySelector(`span[id="${id}"]`).remove();
                 checkboxminus.forEach((c)=>{
                     if(findChilds(c,[id])){
                         document.querySelector(`span[id="${c}"]`).remove();
