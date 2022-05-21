@@ -5,36 +5,36 @@
 
 </head>
 <body>
-<div class="container">
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-            <svg class="bi me-2" width="40" height="32">
+<div className="container">
+    <header className="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+        <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <svg className="bi me-2" width="40" height="32">
                 <use xlink:href="#bootstrap"></use>
             </svg>
-            <span class="fs-4">Simple header</span>
+            <span className="fs-4">Simple header</span>
         </a>
 
-        <ul class="nav nav-pills">
-            <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Home</a></li>
-            <li class="nav-item zhs-menu-event"><a href="#" class="nav-link">zhs-menu</a>
-                <div class="app"></div>
+        <ul className="nav nav-pills">
+            <li className="nav-item"><a href="#" className="nav-link active" aria-current="page">Home</a></li>
+            <li className="nav-item zhs-menu-event"><a href="#" className="nav-link">zhs-menu</a>
+                <div className="app"></div>
             </li>
 
-            <li class="nav-item"><a href="#" class="nav-link">Pricing</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+            <li className="nav-item"><a href="#" className="nav-link">Pricing</a></li>
+            <li className="nav-item"><a href="#" className="nav-link">FAQs</a></li>
+            <li className="nav-item"><a href="#" className="nav-link">About</a></li>
         </ul>
     </header>
-    <div class="fff">
-        <div class="fff--spans">
+    <div className="fff">
+        <div className="fff--spans">
             <!--
                         <span class="fff&#45;&#45;span">DC1 <span class="fff&#45;&#45;x">X</span></span>
                         <span class="fff&#45;&#45;span">DC2 <span class="fff&#45;&#45;x">X</span></span>
             -->
         </div>
-        <input autocomplete="off" onkeyup="build(event.target.value)" class="fff--select">
+        <input autoComplete="off" onKeyUp="build(event.target.value)" className="fff--select">
     </div>
-    <div class="fff--list">
+    <div className="fff--list">
         <ul>
             <li>
                 moskow
@@ -51,6 +51,11 @@
         padding: 10px;
         background-color: gray;
         margin: 4px;
+    }
+
+    .fff--spans {
+        display: flex;
+        flex-wrap: wrap;
     }
 
     .fff {
@@ -87,11 +92,9 @@
 <script>
     let arr;
     let tmp = [];
-    let vw = [];
-    let ch;
-    let step2;
-    let all = [];
-    let checkbox = [];
+    let tree;
+    let step2
+    let checkboxvote = [];
     let checkboxminus = [];
     let find = (id) => {
         let res = false;
@@ -104,8 +107,8 @@
         });
         return res;
     }
-
-    let findChilds = (findId,vw) => {
+    let gch = '';
+    let findChilds = (findId, vw) => {
         let all = [...vw];
         let queue = [...vw];
         let getAll = (id) => {
@@ -123,14 +126,11 @@
         return all.includes(findId);
     }
 
-    function build(cch) {
-
+    function build(ch) {
         tmp = [];
-        if (cch) {
-            ch = cch;
-        }
-
-        let lvl1 = arr.data.filter((item) => {
+        gch = ch;
+        tree = JSON.parse(JSON.stringify(arr.data));
+        let lvl1 = tree.filter((item) => {
             return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
         })
         step2 = lvl1.map((item) => {
@@ -162,19 +162,11 @@
             }
             return cc;
         });
-        if (step2.length > 100) {
-            return
-        }
-
+        //buildHTML
         let html = '<ul>';
-        let lvl = 1;
-        all = [];
-        checkbox = [];
         let build = (item) => {
-            lvl++;
-            let childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"]);
-            let spanToogle = (1) ? `<input type="checkbox" name="scales" id="${item["RegionID"]}" onchange="toogle(${item["RegionID"]})">` : "";
-            childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || findChilds(cc["RegionID"], vw)));
+            let spanToogle = (findChilds(item["RegionID"], checkboxvote) && !findChilds(item["RegionID"], checkboxminus)) ? `<input type="checkbox" name="scales" id="${item["RegionID"]}" checked onchange="toogle(${item["RegionID"]})">` : `<input type="checkbox" name="scales" id="${item["RegionID"]}" onchange="toogle(${item["RegionID"]})">`;
+            childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || findChilds(item["RegionID"], checkboxvote)));
             let isFind = item["RegionName"].toLowerCase().includes(ch.toLowerCase());
             html += `<li>${spanToogle} <span style="color: ${isFind ? "red" : "black"}">${item["RegionName"]}</span></li>`
             html += "<ul>"
@@ -191,115 +183,57 @@
             }
         })
         html += `</ul>`;
-
-
         document.querySelector(".fff--list").innerHTML = html
-    }
-
-    function openParrent(item) {
-        let allparent = [...arr.data.filter((c) => c["RegionID"] == item["ParentID"])];
-        let deep = (item) => {
-            let cc = arr.data.filter((c) => c["RegionID"] == item["ParentID"])
-            allparent.push(...cc);
-            cc.forEach((item) => {
-                deep(item);
-            })
-        }
-        arr.data.filter((c) => c["RegionID"] == item["ParentID"]).forEach((item) => {
-            deep(item);
-        })
-        let res = false;
-        checkbox.forEach((item) => {
-            if (allparent.includes(item)) {
-                res = true;
-            }
-        })
-        return res;
-    }
-
-    function toogle(id) {
-        //если родитель открыть добавить с -
-        //если открывается родитель все ребенки открываются
-
-        if (checkboxminus.includes(id)) {
-            document.querySelector(`input[id="${id}"]`).checked = 'checked';
-            checkboxminus = checkboxminus.filter(cId => cId !== id);
-            document.querySelector(`span[id="${id}"]`).remove()
-            return;
-        } else if (checkbox.includes(id)) {
-            document.querySelector(`input[id="${id}"]`).checked = '';
-
-            let openParent = openParrent(arr.data.find((c)=>c["RegionID"] == id));
-            if (openParent || vw.includes(id) || find(id)) {
-                //удалить всех детей span
-                //если чекбоксминус_айди есть в детях айди
-                let r = [];
-                if(document.querySelector(`span[id="${id}"]`)) {
-                    document.querySelector(`span[id="${id}"]`).remove();
-                }
-                checkboxminus.forEach((c)=>{
-                    if(findChilds(c,[id])){
-                        document.querySelector(`span[id="${c}"]`).remove();
-
-                    }else{
-                        r.push(c);
-                    }
-                })
-                checkboxminus = r
-            } else {
-                checkboxminus.push(id);
-                addMarker(id, '-');
-                return;
-            }
-
-        }
-        let c = true;
-        if (vw.includes(id)) {
-            vw = vw.filter((i) => i !== id)
-            c = false
-        } else {
-            vw.push(id);
-            addMarker(id);
-
-        }
-        build(false);
-
-        let deep = (item) => {
-            childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || findChilds(cc["RegionID"], vw)));
-            checkbox.push(item["RegionID"]);
-
-            document.querySelector(`input[id="${item["RegionID"]}"]`).checked = (c) ? "checked" : '';
-            if(!c){
-                //document.querySelector(`span[id="${item["RegionID"]}"]`).remove();
-            }
-            childs.forEach((item) => {
-                deep(item);
-            });
-        }
-        deep(arr.data.find((item) => item["RegionID"] == id));
 
     }
 
-
-    function addMarker(id, status = "+") {
-        let name = arr.data.find((item) => {
-            return item["RegionID"] == id
-        })["RegionName"];
-        var div = document.createElement("span");
-        if (status === "+") {
-            document.querySelector(".fff--spans").insertAdjacentHTML("afterend", `<span id="${id}" class="fff--span">${name} <span class="fff--x">X</span></span>`)
-        } else {
-            document.querySelector(".fff--spans").insertAdjacentHTML("afterend", `<span id="${id}" style="background:RGB(220,220,220)" class="fff--span">${name} - <span class="fff--x">X</span></span>`)
-        }
-
-    };
     document.querySelector(".fff--select").addEventListener('focus', () => {
         document.querySelector(".fff--list").style.display = "flex";
     });
     document.querySelector(".fff--select").addEventListener('focusout', () => {
         //document.querySelector(".fff--list").style.display = "none";
-
     });
+
+    function toogle(id) {
+        if (checkboxvote.includes(id)) {
+            checkboxvote = checkboxvote.filter((c) => c !== id);
+        } else {
+            if (findChilds(id, checkboxvote)) {
+                if (checkboxminus.includes(id)) {
+                    checkboxminus = checkboxminus.filter((c) => c !== id);
+                } else {
+                    checkboxminus.push(id);
+                }
+            } else {
+                checkboxvote.push(id);
+            }
+        }
+        //вывести всех детей
+        build(gch);
+        document.querySelector(".fff--spans").innerHTML = '';
+        document.querySelectorAll("input").forEach((item) => {
+            let id = Number(item.getAttribute("id"));
+            console.log({s: id, checkboxvote, checkboxminus})
+
+            if (checkboxvote.includes(Number(id))) {
+                addMarker(id, "+")
+            } else if (checkboxminus.includes(Number(id))) {
+                addMarker(id, "-")
+            }
+        });
+    }
+
+    function addMarker(id, status = "+") {
+        let name = arr.data.find((item) => {
+            return item["RegionID"] == id
+        })["RegionName"];
+        if (status === "+") {
+            document.querySelector(".fff--spans").innerHTML += `<span id="${id}" class="fff--span">${name} <span class="fff--x">X</span></span>`
+        } else {
+            document.querySelector(".fff--spans").innerHTML += `<span id="${id}" style="background:RGB(220,220,220)" class="fff--span">${name} - <span class="fff--x">X</span></span>`
+        }
+
+    }
 
     arr = {
         "type": "module",
