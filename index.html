@@ -97,6 +97,7 @@
     let step2
     let checkboxvote = [];
     let checkboxminus = [];
+    let treecache = [];
     let find = (id) => {
         let res = false;
         step2.forEach((items) => {
@@ -110,6 +111,9 @@
     }
     let gch = '';
     let findChilds = (findId, vw) => {
+        if(treecache[JSON.stringify(vw)]){
+            return treecache[JSON.stringify(vw)].includes(findId)
+        }
         let all = [...vw];
         let queue = [...vw];
         let getAll = (id) => {
@@ -124,6 +128,7 @@
         queue.forEach((id) => {
             getAll(id);
         })
+        treecache[JSON.stringify(vw)] = all;
         return all.includes(findId);
     }
 
