@@ -178,6 +178,9 @@
             childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || findChilds(cc["RegionID"], [...resizearr, ...checkboxvote])));
             let isFind = item["RegionName"].toLowerCase().includes(ch.toLowerCase());
             let resize = (resizearr.includes(item["RegionID"])) ? `<span style="cursor:pointer" onclick="resize(${item["RegionID"]})">-</span>` : `<span style="cursor:pointer" onclick="resize(${item["RegionID"]})">+</span>`
+            if (!childs.length) {
+                resize = '';
+            }
             html += `<li>${resize} ${spanToogle} <span style="color: ${isFind ? "red" : "black"}">${item["RegionName"]}</span></li>`
             html += "<ul>"
             childs.forEach((item) => {
