@@ -222,7 +222,6 @@
     function toogle(id) {
         if (checkboxvote.includes(id)) {
             checkboxvote = checkboxvote.filter((c) => c !== id);
-            resize(id)
         } else {
             if (findChilds(id, checkboxvote, true)) {
                 if (checkboxminus.includes(id)) {
@@ -232,7 +231,9 @@
                 }
             } else {
                 checkboxvote.push(id);
-                resize(id)
+                if (!resizearr.includes(id)) {
+                    resize(id)
+                }
             }
         }
         checkboxvote = checkboxvote.filter((c) => {
