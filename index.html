@@ -155,12 +155,12 @@
                 }
                 cc.push(d);
                 tmp.push({id: d["RegionID"], cc: cc});
-                if (d["ParentID"]) {
+                if (d["ParentID"] !== null) {
                     get(arr.data.find((cc) => cc["RegionID"] === d["ParentID"]));
                 }
             }
 
-            if (item["ParentID"]) {
+            if (item["ParentID"] !== null) {
                 get(item);
             } else {
                 if (tmp.map((item) => item["id"]).includes(item["RegionID"])) {
