@@ -231,11 +231,14 @@
                 }
             } else {
                 checkboxvote.push(id);
-                checkboxvote = checkboxvote.filter((c) => {
-                    return !findChilds(c, [id], true) || c == id;
-                })
             }
         }
+        checkboxvote = checkboxvote.filter((c) => {
+            return !findChilds(c, [id], true) || c == id;
+        })
+        checkboxminus = checkboxminus.filter((c) => {
+            return !findChilds(c, [id], true) || c == id;
+        })
         //вывести всех детей
         build(gch);
         document.querySelector(".fff--spans").innerHTML = '';
