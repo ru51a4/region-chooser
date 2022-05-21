@@ -121,8 +121,8 @@
             let childs = arr.data.filter((item) => {
                 return item["ParentID"] == id
             }).map((item) => item["RegionID"]);
-            all.push(...childs)
             if (resizearr.includes(id) || full) {
+                all.push(...childs)
                 childs.forEach((id) => {
                     getAll(id);
                 })
