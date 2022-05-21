@@ -134,7 +134,7 @@
         let lvl1 = tree.filter((item) => {
             return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
         })
-        step2 = lvl1.map((item) => {
+        step2 = [...checkboxvote.map((id) => arr.data.find((c) => c["RegionID"] == id)), ...lvl1].map((item) => {
             let cc = [];
 
             function get(d) {
@@ -162,7 +162,7 @@
                 tmp.push({id: item["RegionID"], cc: cc});
             }
             return cc;
-        });
+        }).filter((c) => !!c);
         //buildHTML
         let html = '<ul>';
         let build = (item) => {
