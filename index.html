@@ -139,6 +139,8 @@
     }
 
     function build(ch) {
+        container = document.querySelector(".fff");
+
         tmp = [];
         gch = ch;
         tree = JSON.parse(JSON.stringify(arr.data));
@@ -164,7 +166,7 @@
             if (item["ParentID"] !== null) {
                 get(item);
             } else {
-                if (tmgp.map((item) => item["id"]).includes(item["RegionID"])) {
+                if (tmp.map((item) => item["id"]).includes(item["RegionID"])) {
                     tmp.find((i) => i["id"] == item["RegionID"]).cc.push(...cc);
                     cc = cc.filter((q) => false);
                     return;
