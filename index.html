@@ -186,7 +186,7 @@
         let lvl1 = tree.filter((item) => {
             return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
         })
-        step2 = [...arr.data.filter((c) => !c["RegionID"] || c["RegionID"] === 0), ...lvl1, ...checkboxvote.map((id) => arr.data.find((c) => c["RegionID"] == id))].map((item) => {
+        step2 = [...lvl1, ...checkboxvote.map((id) => arr.data.find((c) => c["RegionID"] == id))].map((item) => {
             let cc = [];
 
             function get(d) {
