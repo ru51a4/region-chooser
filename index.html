@@ -25,26 +25,28 @@
             <li class="nav-item"><a href="#" class="nav-link">About</a></li>
         </ul>
     </header>
-    <div class="fff">
-        <div class="fff--spans">
-            <!--
-                        <span class="fff&#45;&#45;span">DC1 <span class="fff&#45;&#45;x">X</span></span>
-                        <span class="fff&#45;&#45;span">DC2 <span class="fff&#45;&#45;x">X</span></span>
-            -->
+    <div class="fff-container">
+        <div class="fff">
+            <div class="fff--spans">
+                <!--
+                            <span class="fff&#45;&#45;span">DC1 <span class="fff&#45;&#45;x">X</span></span>
+                            <span class="fff&#45;&#45;span">DC2 <span class="fff&#45;&#45;x">X</span></span>
+                -->
+            </div>
+            <input autoComplete="off" onKeyUp="build(event.target.value)" class="fff--select">
         </div>
-        <input autoComplete="off" onKeyUp="build(event.target.value)" class="fff--select">
+        <div class="fff--list">
+            <ul>
+                <li>
+                    moskow
+                </li>
+                <li>
+                    spb
+                </li>
+            </ul>
+        </div>
+        <button class="btn btn-primary" onclick="send()">отправить</button>
     </div>
-    <div class="fff--list">
-        <ul>
-            <li>
-                moskow
-            </li>
-            <li>
-                spb
-            </li>
-        </ul>
-    </div>
-    <button class="btn btn-primary" onclick="send()">отправить</button>
 </div>
 <style>
     .fff--span {
@@ -100,7 +102,7 @@
     let checkboxvote = [];
     let checkboxminus = [];
     let treecache = [];
-    let container = document.querySelector(".fff");
+    let container = document.querySelector(".fff-container");
     let find = (id) => {
         let res = false;
         step2.forEach((items) => {
@@ -139,7 +141,7 @@
     }
 
     function build(ch) {
-        container = document.querySelector(".fff");
+        container = document.querySelector(".fff-container");
 
         tmp = [];
         gch = ch;
