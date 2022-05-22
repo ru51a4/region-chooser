@@ -176,7 +176,8 @@
         //buildHTML
         let html = '<ul>';
         let build = (item) => {
-            let spanToogle = (findChilds(item["RegionID"], checkboxvote, true) && !findChilds(item["RegionID"], checkboxminus, true)) ? `<input type="checkbox" name="scales" id="${item["RegionID"]}" checked onchange="toogle(${item["RegionID"]})">` : `<input type="checkbox" name="scales" id="${item["RegionID"]}" onchange="toogle(${item["RegionID"]})">`;
+            let disabled = (findChilds(item["RegionID"], checkboxminus, true) && !checkboxminus.includes(item["RegionID"])) ? 'disabled' : ""
+            let spanToogle = (findChilds(item["RegionID"], checkboxvote, true) && !findChilds(item["RegionID"], checkboxminus, true)) ? `<input type="checkbox" name="scales" id="${item["RegionID"]}" checked onchange="toogle(${item["RegionID"]})">` : `<input type="checkbox" name="scales" ${disabled} id="${item["RegionID"]}" onchange="toogle(${item["RegionID"]})">`;
             childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || findChilds(cc["RegionID"], [...resizearr, ...checkboxvote])));
             let isFind = item["RegionName"].toLowerCase().includes(ch.toLowerCase());
             let resize = (resizearr.includes(item["RegionID"])) ? `<span style="cursor:pointer" onclick="resize(${item["RegionID"]})">-</span>` : `<span style="cursor:pointer" onclick="resize(${item["RegionID"]})">+</span>`
