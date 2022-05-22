@@ -266,6 +266,9 @@
         } else {
             let findVote = findChilds(id, checkboxvote, true);
             let findMinus = findChilds(id, checkboxminus, true);
+            //1 - сверху финд вотес - логика с чекбоксминус
+            //2 - серху финд минус - логика с чекбоксвотес
+
             if (checkboxminus.includes(id) || (findVote && findMinus < findVote)) {
                 if (checkboxminus.includes(id)) {
                     checkboxminus = checkboxminus.filter((c) => c !== id);
