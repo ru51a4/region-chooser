@@ -116,16 +116,31 @@
     }
     let resizearr = [];
     let gch = '';
+    let treecachecc = [];
+    let gg = [];
     let findChilds = (findId, vw, full = false) => {
-        if (treecache[JSON.stringify([vw, ...resizearr, full])]) {
-            return treecache[JSON.stringify([vw, ...resizearr, full])].includes(findId)
-        }
+        let c = 0;
         let all = [...vw];
-        let queue = [...vw];
+        if(!treecachecc[JSON.stringify([vw, ...resizearr, full])]){
+            treecachecc[JSON.stringify([vw, ...resizearr, full])] = [];
+        }
+        if (treecache[JSON.stringify([vw, ...resizearr, full])]) {
+            let id = treecache[JSON.stringify([vw, ...resizearr, full])].lastIndexOf(findId);
+            if (id === -1) {
+                return false;
+            }else{
+                id = treecache[JSON.stringify([vw, ...resizearr, full])][id];
+            }
+
+            return gg.find((c) => c["RegionID"] === treecachecc[JSON.stringify([vw, ...resizearr, full])][id]).lvl
+        }
         let getAll = (id) => {
             let childs = arr.data.filter((item) => {
                 return item["ParentID"] == id
-            }).map((item) => item["RegionID"]);
+            }).map((item) => item["RegionID"])
+            childs.forEach((id) => {
+                treecachecc[JSON.stringify([vw, ...resizearr, full])][id] = c;
+            });
             if (resizearr.includes(id) || full) {
                 all.push(...childs)
                 childs.forEach((id) => {
@@ -133,16 +148,38 @@
                 })
             }
         }
-        queue.forEach((id) => {
+        vw.forEach((id) => {
+            c = id;
+            treecachecc[JSON.stringify([vw, ...resizearr, full])][id] = c;
             getAll(id);
         })
         treecache[JSON.stringify([vw, ...resizearr, full])] = all;
-        return all.includes(findId);
+
+        let id = treecache[JSON.stringify([vw, ...resizearr, full])].lastIndexOf(findId);
+        if (id === -1) {
+            return false;
+        }else{
+            id = treecache[JSON.stringify([vw, ...resizearr, full])][id];
+        }
+
+        return gg.find((c) => c["RegionID"] === treecachecc[JSON.stringify([vw, ...resizearr, full])][id]).lvl;
     }
+
 
     function build(ch) {
         container = document.querySelector(".fff-container");
-
+        let lvl = 0;
+        gg = [];
+        let getLvl = (item) => {
+            gg.push({...item, lvl: lvl})
+            let childs = arr.data.filter((c) => c["ParentID"] === item["RegionID"]);
+            childs.forEach((item) => {
+                lvl++;
+                getLvl(item);
+                lvl--;
+            });
+        };
+        getLvl(arr.data.find((c) => c["ParentID"] === null))
         tmp = [];
         gch = ch;
         tree = JSON.parse(JSON.stringify(arr.data));
@@ -181,8 +218,9 @@
         //buildHTML
         let html = '<ul>';
         let build = (item) => {
-            let disabled = (findChilds(item["RegionID"], checkboxminus, true) && !checkboxminus.includes(item["RegionID"])) ? 'disabled' : ""
-            let spanToogle = (findChilds(item["RegionID"], checkboxvote, true) && !findChilds(item["RegionID"], checkboxminus, true)) ? `<input type="checkbox" name="scales" id="${item["RegionID"]}" checked onchange="toogle(${item["RegionID"]})">` : `<input type="checkbox" name="scales" ${disabled} id="${item["RegionID"]}" onchange="toogle(${item["RegionID"]})">`;
+            let findVote = findChilds(item["RegionID"], checkboxvote, true);
+            let findMinus = findChilds(item["RegionID"], checkboxminus, true);
+            let spanToogle = (findVote && findMinus < findVote) ? `<input type="checkbox" name="scales" id="${item["RegionID"]}" checked onchange="toogle(${item["RegionID"]})">` : `<input type="checkbox" name="scales" id="${item["RegionID"]}" onchange="toogle(${item["RegionID"]})">`;
             childs = arr.data.filter((cc) => cc["ParentID"] == item["RegionID"] && (find(cc["RegionID"]) || findChilds(cc["RegionID"], [...resizearr, ...checkboxvote])));
             let isFind = item["RegionName"].toLowerCase().includes(ch.toLowerCase());
             let resize = (resizearr.includes(item["RegionID"])) ? `<span style="cursor:pointer" onclick="resize(${item["RegionID"]})">-</span>` : `<span style="cursor:pointer" onclick="resize(${item["RegionID"]})">+</span>`
@@ -226,7 +264,9 @@
         if (checkboxvote.includes(id)) {
             checkboxvote = checkboxvote.filter((c) => c !== id);
         } else {
-            if (findChilds(id, checkboxvote, true)) {
+            let findVote = findChilds(id, checkboxvote, true);
+            let findMinus = findChilds(id, checkboxminus, true);
+            if (checkboxminus.includes(id) || (findVote && findMinus < findVote)) {
                 if (checkboxminus.includes(id)) {
                     checkboxminus = checkboxminus.filter((c) => c !== id);
                 } else {
