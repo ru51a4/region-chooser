@@ -100,6 +100,7 @@
     let checkboxvote = [];
     let checkboxminus = [];
     let treecache = [];
+    let container = document.querySelector(".fff");
     let find = (id) => {
         let res = false;
         step2.forEach((items) => {
@@ -163,7 +164,7 @@
             if (item["ParentID"] !== null) {
                 get(item);
             } else {
-                if (tmp.map((item) => item["id"]).includes(item["RegionID"])) {
+                if (tmgp.map((item) => item["id"]).includes(item["RegionID"])) {
                     tmp.find((i) => i["id"] == item["RegionID"]).cc.push(...cc);
                     cc = cc.filter((q) => false);
                     return;
@@ -199,15 +200,12 @@
             }
         })
         html += `</ul>`;
-        document.querySelector(".fff--list").innerHTML = html
+        container.querySelector(".fff--list").innerHTML = html
 
     }
 
-    document.querySelector(".fff--select").addEventListener('focus', () => {
-        document.querySelector(".fff--list").style.display = "flex";
-    });
-    document.querySelector(".fff--select").addEventListener('focusout', () => {
-        //document.querySelector(".fff--list").style.display = "none";
+    container.querySelector(".fff--select").addEventListener('focus', () => {
+        container.querySelector(".fff--list").style.display = "flex";
     });
 
     function resize(id) {
@@ -245,10 +243,9 @@
         })
         //вывести всех детей
         build(gch);
-        document.querySelector(".fff--spans").innerHTML = '';
-        document.querySelectorAll("input").forEach((item) => {
+        container.querySelector(".fff--spans").innerHTML = '';
+        container.querySelectorAll("input").forEach((item) => {
             let id = Number(item.getAttribute("id"));
-            console.log({s: id, checkboxvote, checkboxminus})
 
             if (checkboxvote.includes(Number(id))) {
                 addMarker(id, "+")
@@ -263,9 +260,9 @@
             return item["RegionID"] == id
         })["RegionName"];
         if (status === "+") {
-            document.querySelector(".fff--spans").innerHTML += `<span id="${id}" class="fff--span">${name} <span class="fff--x">X</span></span>`
+            container.querySelector(".fff--spans").innerHTML += `<span id="${id}" class="fff--span">${name} <span class="fff--x">X</span></span>`
         } else {
-            document.querySelector(".fff--spans").innerHTML += `<span id="${id}" style="background:RGB(220,220,220)" class="fff--span">${name} - <span class="fff--x">X</span></span>`
+            container.querySelector(".fff--spans").innerHTML += `<span id="${id}" style="background:RGB(220,220,220)" class="fff--span">${name} - <span class="fff--x">X</span></span>`
         }
 
     }
