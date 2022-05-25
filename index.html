@@ -186,38 +186,48 @@
         let lvl1 = tree.filter((item) => {
             return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
         })
-        step2 = [...lvl1, ...checkboxvote.map((id) => arr.data.find((c) => c["RegionID"] == id))].map((item) => {
-            //todo refactor
-            let cc = [item];
+        step2 = [...lvl1, ...checkboxvote.map((id) => arr.data.find((c) => c["RegionID"] == id))];
+        let res = [];
 
-            function get(d) {
-                if (tmp.map((item) => item["id"]).includes(d["RegionID"])) {
-                    tmp.find((i) => i["id"] == d["RegionID"]).cc.push(...cc);
-                    return;
-                }
-                cc.push(d);
-                tmp.push({id: d["RegionID"], cc: cc});
-                if (d["ParentID"]) {
-                    get(arr.data.find((cc) => cc["RegionID"] === d["ParentID"]));
-                }
-            }
-
-            if (item["ParentID"]) {
-                cc.push(arr.data.find((c) => c["RegionID"] == item["ParentID"]))
-                get(item);
+        function iter(item) {
+            let cc = [];
+            if (tmp.map((c) => c["id"]).includes(item["RegionID"])) {
+                return;
             } else {
-                if (tmp.map((item) => item["id"]).includes(item["RegionID"])) {
-                    tmp.find((i) => i["id"] == item["RegionID"]).cc.push(...cc);
+                cc.push(item);
+                tmp.push({"id": item["RegionID"], cc});
+            }
+
+            let deep = (d) => {
+                if (tmp.map((c) => c["id"]).includes(d["RegionID"])) {
+                    tmp.find((c) => c["id"] === d["RegionID"]).cc.push(...cc);
+                    //cc = []
                 } else {
-                    cc.push(item)
-                    tmp.push({id: item["RegionID"], cc: cc});
+                    cc.push(d);
+                    tmp.push({"id": d["RegionID"], cc});
+                    if (d["ParentID"] !== null) {
+                        deep(arr.data.find((c) => c["RegionID"] === d["ParentID"]));
+                    }
                 }
             }
-            return cc;
-        }).filter((c) => c.length);
-        if(step2.length > 100){
+
+            if (item["ParentID"] !== null) {
+                deep(arr.data.find((c) => c["RegionID"] === item["ParentID"]));
+            }
+            res.push(cc);
+        }
+
+        step2.forEach((item) => {
+            iter(item);
+        })
+
+        step2 = res.filter((item) => item.length);
+
+        if (step2.length > 100) {
             return;
         }
+        console.log(JSON.parse(JSON.stringify(step2)))
+
 
         //buildHTML
         let html = '<ul>';
