@@ -104,15 +104,7 @@
     let treecache = [];
     let container = document.querySelector(".fff-container");
     let find = (id) => {
-        let res = false;
-        step2.forEach((items) => {
-            items.forEach((item) => {
-                if (item["RegionID"] == id) {
-                    res = true;
-                }
-            });
-        });
-        return res;
+        return step2.map((c) => c["RegionID"]).includes(id);
     }
     let resizearr = [];
     let gch = '';
@@ -187,53 +179,42 @@
             return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
         })
         step2 = [...lvl1, ...checkboxvote.map((id) => arr.data.find((c) => c["RegionID"] == id))];
-        let res = [];
+        let mergeres = [];
 
-        function iter(item) {
-            let cc = [];
+        let merge = (item) => {
             if (tmp.map((c) => c["id"]).includes(item["RegionID"])) {
                 return;
             } else {
-                cc.push(item);
-                tmp.push({"id": item["RegionID"], cc: [cc]});
+                mergeres.push(item);
+                tmp.push({"id": item["RegionID"]});
             }
 
             let deep = (d) => {
                 if (tmp.map((c) => c["id"]).includes(d["RegionID"])) {
-                    tmp.find((c) => c["id"] === d["RegionID"]).cc.push(cc);
-                    cc = []
                     return;
                 } else {
-                    cc.push(d);
-                    tmp.push({"id": d["RegionID"], cc: [cc]});
+                    mergeres.push(d);
+                    tmp.push({"id": d["RegionID"]});
                     if (d["ParentID"] !== null || d["ParentID"] === 0) {
                         deep(arr.data.find((c) => c["RegionID"] === d["ParentID"]));
                     }
                 }
             }
-
             if (item["ParentID"] !== null || item["ParentID"] === 0) {
                 deep(arr.data.find((c) => c["RegionID"] === item["ParentID"]));
             }
-            res.push(cc);
         }
 
 
         step2.forEach((item) => {
-            iter(item);
+            merge(item);
         })
+        console.log(mergeres)
 
         //todo refactor && optimization
-        step2 = tmp.map((item) => {
-            let res = [];
-            item.cc.forEach((cc) => {
-                cc.forEach((cc) => {
-                    res.push(cc);
-                });
-            });
-            return res;
-        })
-        if (step2.length > 100) {
+        step2 = mergeres;
+
+        if (step2.length > 1000) {
             return;
         }
 
