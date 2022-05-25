@@ -204,14 +204,9 @@
                 deep(arr.data.find((c) => c["RegionID"] === item["ParentID"]));
             }
         }
-
-
         step2.forEach((item) => {
             merge(item);
         })
-        console.log(mergeres)
-
-        //todo refactor && optimization
         step2 = mergeres;
 
         if (step2.length > 1000) {
