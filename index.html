@@ -195,38 +195,47 @@
                 return;
             } else {
                 cc.push(item);
-                tmp.push({"id": item["RegionID"], cc});
+                tmp.push({"id": item["RegionID"], cc: [cc]});
             }
 
             let deep = (d) => {
                 if (tmp.map((c) => c["id"]).includes(d["RegionID"])) {
-                    tmp.find((c) => c["id"] === d["RegionID"]).cc.push(...cc);
-                    //cc = []
+                    tmp.find((c) => c["id"] === d["RegionID"]).cc.push(cc);
+                    cc = []
+                    return;
                 } else {
                     cc.push(d);
-                    tmp.push({"id": d["RegionID"], cc});
-                    if (d["ParentID"] !== null) {
+                    tmp.push({"id": d["RegionID"], cc: [cc]});
+                    if (d["ParentID"] !== null || d["ParentID"] === 0) {
                         deep(arr.data.find((c) => c["RegionID"] === d["ParentID"]));
                     }
                 }
             }
 
-            if (item["ParentID"] !== null) {
+            if (item["ParentID"] !== null || item["ParentID"] === 0) {
                 deep(arr.data.find((c) => c["RegionID"] === item["ParentID"]));
             }
             res.push(cc);
         }
 
+
         step2.forEach((item) => {
             iter(item);
         })
 
-        step2 = res.filter((item) => item.length);
-
+        //todo refactor && optimization
+        step2 = tmp.map((item) => {
+            let res = [];
+            item.cc.forEach((cc) => {
+                cc.forEach((cc) => {
+                    res.push(cc);
+                });
+            });
+            return res;
+        })
         if (step2.length > 100) {
             return;
         }
-        console.log(JSON.parse(JSON.stringify(step2)))
 
 
         //buildHTML
@@ -248,12 +257,8 @@
             });
             html += "</ul>"
         }
-        step2.forEach((item) => {
-            item = item.find((c) => !c["ParentID"]);
-            if (item) {
-                lvl = 1;
-                build(item);
-            }
+        arr.data.filter((c) => c["RegionID"] === 0).forEach((item) => {
+            build(item);
         })
         html += `</ul>`;
         container.querySelector(".fff--list").innerHTML = html
