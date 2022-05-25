@@ -187,34 +187,38 @@
             return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
         })
         step2 = [...lvl1, ...checkboxvote.map((id) => arr.data.find((c) => c["RegionID"] == id))].map((item) => {
-            let cc = [];
+            //todo refactor
+            let cc = [item];
 
             function get(d) {
                 if (tmp.map((item) => item["id"]).includes(d["RegionID"])) {
                     tmp.find((i) => i["id"] == d["RegionID"]).cc.push(...cc);
-                    cc = cc.filter((q) => false);
                     return;
                 }
                 cc.push(d);
                 tmp.push({id: d["RegionID"], cc: cc});
-                if (d["ParentID"] !== null) {
+                if (d["ParentID"]) {
                     get(arr.data.find((cc) => cc["RegionID"] === d["ParentID"]));
                 }
             }
 
-            if (item["ParentID"] !== null) {
+            if (item["ParentID"]) {
+                cc.push(arr.data.find((c) => c["RegionID"] == item["ParentID"]))
                 get(item);
             } else {
                 if (tmp.map((item) => item["id"]).includes(item["RegionID"])) {
                     tmp.find((i) => i["id"] == item["RegionID"]).cc.push(...cc);
-                    cc = cc.filter((q) => false);
-                    return;
+                } else {
+                    cc.push(item)
+                    tmp.push({id: item["RegionID"], cc: cc});
                 }
-                cc.push(item)
-                tmp.push({id: item["RegionID"], cc: cc});
             }
             return cc;
-        }).filter((c) => !!c);
+        }).filter((c) => c.length);
+        if(step2.length > 100){
+            return;
+        }
+
         //buildHTML
         let html = '<ul>';
         let build = (item) => {
