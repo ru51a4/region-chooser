@@ -160,7 +160,7 @@
 
     function build(ch) {
         container = document.querySelector(".fff-container");
-        let lvl = 0;
+        let lvl = 1;
         gg = [];
         let getLvl = (item) => {
             gg.push({...item, lvl: lvl})
@@ -271,6 +271,7 @@
                     checkboxminus.push(id);
                 }
             } else {
+                console.log({id})
                 checkboxvote.push(id);
                 if (!resizearr.includes(id)) {
                     resize(id)
@@ -283,7 +284,6 @@
         checkboxminus = checkboxminus.filter((c) => {
             return !findChilds(c, [id], true) || c == id;
         })
-        //вывести всех детей
         build(gch);
         container.querySelector(".fff--spans").innerHTML = '';
         container.querySelectorAll("input").forEach((item) => {
