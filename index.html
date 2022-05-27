@@ -176,7 +176,7 @@
         gch = ch;
         tree = JSON.parse(JSON.stringify(arr.data));
         let lvl1 = tree.filter((item) => {
-            return (item["RegionName"].toLowerCase().includes(ch.toLowerCase()))
+            return (ch.length > 2) ? (item["RegionName"].toLowerCase().includes(ch.toLowerCase())) : false;
         })
         step2 = [...lvl1, ...checkboxvote.map((id) => arr.data.find((c) => c["RegionID"] == id))];
         let mergeres = [];
@@ -209,9 +209,7 @@
         })
         step2 = mergeres;
 
-        if (step2.length > 100) {
-            return;
-        }
+
 
 
         //buildHTML
