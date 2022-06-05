@@ -204,12 +204,10 @@
                 deep(arr.data.find((c) => c["RegionID"] === item["ParentID"]));
             }
         }
-        step2.forEach((item) => {
+        [...step2].forEach((item) => {
             merge(item);
         })
         step2 = mergeres;
-
-
 
 
         //buildHTML
@@ -269,9 +267,8 @@
                     checkboxminus.push(id);
                 }
             } else {
-                console.log({id})
                 checkboxvote.push(id);
-                if (!resizearr.includes(id)) {
+                if (!resizearr.includes(id) && arr.data.filter((c) => c["ParentID"] === id).length) {
                     resize(id)
                 }
             }
@@ -308,7 +305,7 @@
     }
 
     function send() {
-        console.log({checkboxvote, checkboxminus});
+        console.log({checkboxvote, checkboxminus, resizearr});
     }
 
     arr = {
