@@ -162,6 +162,7 @@
 
 
         function build(ch) {
+            console.log(arr)
             container = document.querySelector(".fff-container");
             let lvl = 1;
             gg = [];
@@ -199,8 +200,7 @@
                         mergeres.push(d);
                         tmp.push({ "id": d["RegionID"] });
                         if (d["ParentID"] !== null || d["ParentID"] === 0) {
-                            deep(arr.data.find((c) =
-                                build('') > c["RegionID"] === d["ParentID"]));
+                            deep(arr.data.find((c) => c["RegionID"] === d["ParentID"]));
                         }
                     }
                 }
